@@ -7,7 +7,8 @@ import torch.nn as nn
 import torch.optim as optim
 from tqdm import tqdm
 import sys
-
+import os
+os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
 class Word2Vec:
     def __init__(self,
@@ -81,7 +82,7 @@ class Word2Vec:
             self.optimizer.step()
 
             process_bar.set_description("Loss: %0.8f, lr: %0.6f" %
-                                        (loss.data[0],
+                                        (loss.item(),
                                          self.optimizer.param_groups[0]['lr']))
             if i * self.batch_size % 100000 == 0:
                 lr = self.initial_lr * (1.0 - 1.0 * i / batch_count)
