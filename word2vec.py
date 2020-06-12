@@ -1,4 +1,4 @@
-from input_data import InputData
+from input_data_item2vec import InputData
 import numpy
 from model import SkipGramModel
 from torch.autograd import Variable
@@ -7,6 +7,7 @@ import torch.nn as nn
 import torch.optim as optim
 from tqdm import tqdm
 import sys
+
 import os
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
 
@@ -19,7 +20,7 @@ class Word2Vec:
                  window_size=5,
                  iteration=1,
                  initial_lr=0.025,
-                 min_count=5):
+                 min_count=2):
         """Initilize class parameters.
 
         Args:
@@ -88,10 +89,16 @@ class Word2Vec:
                 lr = self.initial_lr * (1.0 - 1.0 * i / batch_count)
                 for param_group in self.optimizer.param_groups:
                     param_group['lr'] = lr
+
         self.skip_gram_model.save_embedding(
             self.data.id2word, self.output_file_name, self.use_cuda)
 
 
 if __name__ == '__main__':
-    w2v = Word2Vec(input_file_name=sys.argv[1], output_file_name=sys.argv[2])
+    #w2v = Word2Vec(input_file_name=sys.argv[1], output_file_name=sys.argv[2])
+
+    # 训练19楼用户访问记录
+    w2v = Word2Vec(emb_dimension=5,iteration=5,batch_size=100,window_size=20,input_file_name='/Users/xugp/works/19lou/deepwalk/19lou.txt'
+            , output_file_name='/Users/xugp/works/19lou/deepwalk/19lou_vec.txt')
+    
     w2v.train()
