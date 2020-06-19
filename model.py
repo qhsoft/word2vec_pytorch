@@ -2,6 +2,7 @@ import torch
 from torch.autograd import Variable
 import torch.nn as nn
 import torch.nn.functional as F
+import numpy as np
 
 
 class SkipGramModel(nn.Module):
@@ -89,7 +90,13 @@ class SkipGramModel(nn.Module):
         fout.write('%d %d\n' % (len(id2word), self.emb_dimension))
         for wid, w in id2word.items():
             e = embedding[wid]
-            e = ' '.join(map(lambda x: str(x), e))
+            #进行L2正则化（归一化）
+            norm=0.0
+            for num in e:
+                norm+=num*num
+            norm=np.sqrt(norm)
+            
+            e = ' '.join(map(lambda x: str(x/norm), e))
             fout.write('%s %s\n' % (w, e))
 
 
