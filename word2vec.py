@@ -1,4 +1,4 @@
-from input_data_item2vec import InputData
+from input_data import InputData
 import numpy
 from model import SkipGramModel
 from torch.autograd import Variable
@@ -7,6 +7,7 @@ import torch.nn as nn
 import torch.optim as optim
 from tqdm import tqdm
 import sys
+import time
 
 import os
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
@@ -63,9 +64,15 @@ class Word2Vec:
         # self.skip_gram_model.save_embedding(
         #     self.data.id2word, 'begin_embedding.txt', self.use_cuda)
         for i in process_bar:
+            t1=time.time()
             pos_pairs = self.data.get_batch_pairs(self.batch_size,
                                                   self.window_size)
+            #t2=time.time()
             neg_v = self.data.get_neg_v_neg_sampling(pos_pairs, 5)
+            #t3=time.time()
+
+            #print(t2-t1,t3-t2)
+
             pos_u = [pair[0] for pair in pos_pairs]
             pos_v = [pair[1] for pair in pos_pairs]
 
@@ -82,7 +89,7 @@ class Word2Vec:
             loss.backward()
             self.optimizer.step()
 
-            process_bar.set_description("Loss: %0.8f, lr: %0.6f" %
+            process_bar.set_description("Loss:%0.6f lr:%0.6f" %
                                         (loss.item(),
                                          self.optimizer.param_groups[0]['lr']))
             if i * self.batch_size % 100000 == 0:
@@ -97,8 +104,11 @@ class Word2Vec:
 if __name__ == '__main__':
     #w2v = Word2Vec(input_file_name=sys.argv[1], output_file_name=sys.argv[2])
 
-    # 训练19楼用户访问记录
-    w2v = Word2Vec(emb_dimension=5,iteration=5,batch_size=100,window_size=20,input_file_name='/Users/xugp/works/19lou/deepwalk/19lou.txt'
-            , output_file_name='/Users/xugp/works/19lou/deepwalk/19lou_vec.txt')
+    # 经验证比较有效的一组记录
+    # w2v = Word2Vec(emb_dimension=8,iteration=50,batch_size=5000,window_size=15,initial_lr=0.05,input_file_name='19lou_0616.txt'
+    #         , output_file_name='19lou_vec_0616.txt')
+    # 训练19楼用户访问记录5555
+    w2v = Word2Vec(emb_dimension=64,iteration=50,batch_size=5000,window_size=20,initial_lr=0.015,min_count=2,input_file_name='graph_list_out.txt'
+            , output_file_name='19lou_vec_out.txt')
     
     w2v.train()

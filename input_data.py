@@ -14,7 +14,7 @@ class InputData:
         word_count: Word count in files, without low-frequency words.
     """
 
-    def __init__(self, file_name, min_count):
+    def __init__(self, file_name, min_count=2):
         self.input_file_name = file_name
         self.get_words(min_count)
         self.word_pair_catch = deque()
@@ -39,16 +39,19 @@ class InputData:
         self.word2id = dict()
         self.id2word = dict()
         wid = 0
+        low_word_count=0
         self.word_frequency = dict()
         for w, c in word_frequency.items():
             if c < min_count:
                 self.sentence_length -= c
+                low_word_count+=1
                 continue
             self.word2id[w] = wid
             self.id2word[wid] = w
             self.word_frequency[wid] = c
             wid += 1
         self.word_count = len(self.word2id)
+        print('low word count:',low_word_count)
 
     def init_sample_table(self):
         self.sample_table = []
@@ -75,8 +78,7 @@ class InputData:
                 except:
                     continue
             for i, u in enumerate(word_ids):
-                for j, v in enumerate(
-                        word_ids[max(i - window_size, 0):i + window_size]):
+                for j, v in enumerate(word_ids[max(i - window_size, 0):i + window_size]):
                     assert u < self.word_count
                     assert v < self.word_count
                     if i == j:
@@ -84,7 +86,9 @@ class InputData:
                     self.word_pair_catch.append((u, v))
         batch_pairs = []
         for _ in range(batch_size):
-            batch_pairs.append(self.word_pair_catch.popleft())
+            p=self.word_pair_catch.popleft()
+            #print(p)
+            batch_pairs.append(p)
         return batch_pairs
 
     # @profile
@@ -99,8 +103,8 @@ class InputData:
 
 
 def test():
-    a = InputData('./zhihu.txt')
-
+    a = InputData('./graph_list_out.txt')
+    print(a.evaluate_pair_count(20))
 
 if __name__ == '__main__':
     test()

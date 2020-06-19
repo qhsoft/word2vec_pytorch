@@ -1,6 +1,6 @@
 from sklearn.manifold import TSNE
 #from sklearn.datasets import load_iris,load_digits
-from sklearn.decomposition import PCA
+#from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 import os
 import numpy as np
@@ -14,7 +14,7 @@ import numpy as np
 
 def read_19lou_vec():
     data=[]
-    with open('19lou_vec.txt') as f:
+    with open('19lou_vec_out.txt') as f:
         f.readline()
         while True:
             line=f.readline().strip().split(' ')
@@ -31,17 +31,17 @@ def read_19lou_vec():
 
 data=read_19lou_vec()
 X_tsne = TSNE(n_components=2,random_state=33).fit_transform(data)
-X_pca = PCA(n_components=2).fit_transform(data)
+#X_pca = PCA(n_components=2).fit_transform(data)
 ckpt_dir="images"
 if not os.path.exists(ckpt_dir):
     os.makedirs(ckpt_dir)
 
-plt.figure(figsize=(10, 5))
-plt.subplot(121)
+plt.figure(figsize=(10, 10))
+plt.subplot(111)
 plt.scatter(X_tsne[:, 0], X_tsne[:, 1],label="t-SNE")#, c=digits.target
 plt.legend()
-plt.subplot(122)
-plt.scatter(X_pca[:, 0], X_pca[:, 1],label="PCA") #, c=digits.target
-plt.legend()
+# plt.subplot(122)
+# plt.scatter(X_pca[:, 0], X_pca[:, 1],label="PCA") #, c=digits.target
+# plt.legend()
 plt.savefig('images/digits_tsne-pca.png', dpi=120)
 plt.show()
