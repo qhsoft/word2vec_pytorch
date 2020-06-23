@@ -96,7 +96,7 @@ class SkipGramModel(nn.Module):
                 norm+=num*num
             norm=np.sqrt(norm)
             
-            e = ' '.join(map(lambda x: str(x/norm), e))
+            e = ' '.join(map(lambda x: '%0.8f'%(x/norm), e))
             fout.write('%s %s\n' % (w, e))
 
 

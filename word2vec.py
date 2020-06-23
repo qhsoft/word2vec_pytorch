@@ -37,7 +37,7 @@ class Word2Vec:
         Returns:
             None.
         """
-        self.data = InputData(input_file_name, min_count)
+        self.data = InputData(input_file_name, min_count,window_size)
         self.output_file_name = output_file_name
         self.emb_size = len(self.data.word2id)
         self.emb_dimension = emb_dimension
@@ -64,17 +64,19 @@ class Word2Vec:
         # self.skip_gram_model.save_embedding(
         #     self.data.id2word, 'begin_embedding.txt', self.use_cuda)
         for i in process_bar:
-            t1=time.time()
-            pos_pairs = self.data.get_batch_pairs(self.batch_size,
-                                                  self.window_size)
+            #t1=time.time()
+            pos_pairs = self.data.get_batch_pairs(self.batch_size,self.window_size)
             #t2=time.time()
             neg_v = self.data.get_neg_v_neg_sampling(pos_pairs, 5)
             #t3=time.time()
 
-            #print(t2-t1,t3-t2)
+            #print(t2-t1,t3-t2,len(pos_pairs))
 
             pos_u = [pair[0] for pair in pos_pairs]
             pos_v = [pair[1] for pair in pos_pairs]
+
+            # t4=time.time()
+            # print(t4-t3)
 
             pos_u = Variable(torch.LongTensor(pos_u))
             pos_v = Variable(torch.LongTensor(pos_v))
