@@ -73,6 +73,9 @@ class InputData:
         self.sample_table = numpy.array(sample_table)
 
     def init_pairs(self,window_size):
+        """
+        一次性生成样本数据对，用来测试优化训练速度，但是并没有加快，反而变慢了
+        """
         with open(self.input_file_name) as input_file:
             while 1:
                 sentence = input_file.readline()
